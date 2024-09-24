@@ -38,19 +38,4 @@ while read -r gene; do
 
 done < com.txt
 
-#msa for each gene with 12 jobs at a time
-module load mafft-7.221-gcc-8.2.0-y6cgezm
 
-        max_jobs=12
-        job_count=0
-
-while read -r gene; do
-    linsi --thread 4 --maxiterate 1000 ${gene}.fasta > ${gene}_aligned.fasta &
-
-        job_count=$((job_count + 1))
-            if [ "$job_count" -ge "$max_jobs" ]; then
-                wait
-                job_count=0
-            fi
-
-done < com.txt
