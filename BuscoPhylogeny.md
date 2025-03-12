@@ -2,9 +2,9 @@
 
 ***Making a Phylogeny with BUSCO shared single copy orthologs***
 
-Code was derived from https://currentprotocols.onlinelibrary.wiley.com/doi/10.1002/cpz1.323 for more information please read their paper.
+Code was derived from [Manni et al. 2021](https://currentprotocols.onlinelibrary.wiley.com/doi/10.1002/cpz1.323). For more information please read their paper.
 
-#Run BUSCO on all genomes in parallel
+# Run BUSCO on all genomes in parallel
 
 ```
 vi busco.sh
