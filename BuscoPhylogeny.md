@@ -8,7 +8,7 @@ To download the data and set up the directories see: [Data.md]()
 
 <details>
     
-<summary><b>Run BUSCO on all genomes in parallel</b></summary>
+<summary><b>1. Run BUSCO on all genomes in parallel</b></summary>
 
 ```
 vi busco.sh
@@ -65,7 +65,7 @@ Make sure that all the buscos worked. If they didn't why? probably because fna f
 </details> 
 
 <details>
-    <summary><b>Concatenate BUSCO summaries for all genomes</b></summary>
+    <summary><b>2. Concatenate BUSCO summaries for all genomes</b></summary>
     
 ```
 vi busco_summary.sh
@@ -123,5 +123,69 @@ I used this to sure that the busco is good quality, although good quality is sor
 </details>
 
 <details>
-    <summary><b>Concatenate all shared single copy orthologous sequences</b></summary>
+    <summary><b>3. Concatenate all shared single copy orthologous sequences</b></summary>
+</details>
+
+<details>
+    <summary><b>4. Multiple sequence alignment and trimming</b></summary>
+
+```
+#!/bin/bash
+
+#SBATCH --account iacc_jfierst
+#SBATCH --qos highmem1
+#SBATCH --partition highmem1
+#SBATCH --output=out_busco_msa_2.log
+#SBATCH -n 40
+
+WORKING_DIR=/home/data/jfierst/veggers/RhabditinaPhylogeny
+
+cd ${WORKING_DIR}
+
+
+# trim alignments
+#module load mamba/23.1.0-4
+#source activate trimal
+#source activate clipkit
+
+#while read -r gene; do
+#    cd busco_msa/${gene}
+#    clipkit -m smart-gap ${gene}_mafftAligned.fasta
+#    trimal -in ${gene}_aligned.fasta -keepheader -keepseqs -gappyout -out ${gene}_aligned_clean.fasta
+#    cd ${WORKING_DIR}
+#done < com.txt
+
+# put all inputs into same directory
+#mkdir -p busco_msa/total
+
+#while read -r gene; do
+#    cd busco_msa/${gene}
+#    cp ${gene}_mafftAligned.fasta.clipkit ./../total/.
+#    cd ${WORKING_DIR}
+#done < com.txt
+
+# fix names . . . again
+#while read -r gene; do
+#    cd busco_msa/total/
+#    cut -d "_" -f 1 ${gene}_mafftAligned.fasta.clipkit > temp
+#    mv temp ${gene}_mafftAligned.fasta.clipkit
+#    cd ${WORKING_DIR}
+#done < com.txt
+
+</details>
+
+<details>
+<summary><b>5. AMAS and IQTREE</b></summary>
+
+# get partition file with AMAS
+#module load mamba/23.1.0-4
+#source activate AMAS
+
+#python3 /home/data/jfierst/veggers/programs/AMAS/amas/AMAS.py concat -c 40 -f fasta -d dna --part-format raxml -i ${WORKING_DIR}/busco_msa/total/*
+
+# iqtree
+module load iqtree-2-gcc-8.2.0
+
+iqtree2 -s concatenated.out -spp partitions.txt -m MFP+MERGE -bb 1000 -alrt 1000 -nt 40
+```
 </details>
