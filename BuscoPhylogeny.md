@@ -2,7 +2,7 @@
 
 ***Making a Phylogeny with BUSCO shared single copy orthologs***
 
-Code was derived from [Manni et al. 2021](https://currentprotocols.onlinelibrary.wiley.com/doi/10.1002/cpz1.323). For more information please read their paper.
+Code/methods derived from [Manni et al. 2021](https://currentprotocols.onlinelibrary.wiley.com/doi/10.1002/cpz1.323). For more information please read their paper.
 
 To download the data and set up the directories see: [Data.md]()
 
