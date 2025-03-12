@@ -171,12 +171,14 @@ cd ${WORKING_DIR}
 #    mv temp ${gene}_mafftAligned.fasta.clipkit
 #    cd ${WORKING_DIR}
 #done < com.txt
+```
 
 </details>
 
 <details>
 <summary><b>5. AMAS and IQTREE</b></summary>
 
+```
 # get partition file with AMAS
 #module load mamba/23.1.0-4
 #source activate AMAS
