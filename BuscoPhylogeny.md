@@ -66,6 +66,7 @@ Make sure that all the buscos worked. If they didn't why? probably because fna f
 
 <details>
     <summary><b>Concatenate BUSCO summaries for all genomes</b></summary>
+    
 ```
 vi busco_summary.sh
 ```
@@ -89,7 +90,7 @@ echo -e "ID\tbusco\tsingle_copy_count" > busco_summary.txt
 while read -r line; do
     cd RhabditinaPhylogeny_Buscos/busco_${line}/run_nematoda_odb10/busco_sequences/single_copy_busco_sequences/
 
-#list all single copy orthologs into a list 
+#list all single copy orthologs into a list (note: the paths might be messed up here. If you run it and don't see the output file, search around a bit)
     ls *.fna | sort > ./../../../${line}_single_copy_list.txt
     cd ${WORKING_DIR}
 
@@ -119,4 +120,8 @@ APS4            C:76.3%[S:76.0%,D:0.3%],F:6.4%,M:17.3%,n:3131           2379
 ```
 I used this to sure that the busco is good quality, although good quality is sort of subjective with organism of study. Here I define good quality as not too many duplicates. 3 species were removed from the analysis for having more than 5% duplicate BUSCOs, like you see in AF72 in the above output.
 
+</details>
+
+<details>
+    <summary><b>Concatenate all shared single copy orthologous sequences</b></summary>
 </details>
