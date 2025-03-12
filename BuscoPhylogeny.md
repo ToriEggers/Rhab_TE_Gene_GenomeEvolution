@@ -174,24 +174,24 @@ done < busco_parse.txt
 #make directory for organization 
 mkdir -p busco_msa
 
-#loop #2 makes a directory for each gene, copies the species gene sequence to that directory, and adds the species name to the fasta header
-while read -r gene; do
-    mkdir -p ./busco_msa/${gene}
-    cd busco_msa/${gene}
+#loop #2 makes a directory for each BUSCO_ID, copies the species BUSCO_ID gene sequence to that directory, and adds the species name to the fasta header
+while read -r BUSCO_ID; do
+    mkdir -p ./busco_msa/${BUSCO_ID}
+    cd busco_msa/${BUSCO_ID}
 
     while read -r species; do
-        cp ${WORKING_DIR}/RhabditinaPhylogeny_Buscos/busco_${species}/run_nematoda_odb10/busco_sequences/single_copy_busco_sequences/${gene} .
-        sed -e "s/^>/>${species}_/" ${gene} | sed 's/-/_/g' | sed 's/\./_/g' | sed 's/\:/_/g' > ${species}_${gene}
-        rm ${gene}
+        cp ${WORKING_DIR}/RhabditinaPhylogeny_Buscos/busco_${species}/run_nematoda_odb10/busco_sequences/single_copy_busco_sequences/${BUSCO_ID} .
+        sed -e "s/^>/>${species}_/" ${BUSCO_ID} | sed 's/-/_/g' | sed 's/\./_/g' | sed 's/\:/_/g' > ${species}_${BUSCO_ID}
+        rm ${BUSCO_ID}
     done < ./../../busco_parse.txt
 
-    cat * > ${gene}.fasta
+    cat * > ${BUSCO_ID}.fasta
     rm *.fna
     cd ${WORKING_DIR}
 
 done < com.txt
 ```
-Your output is ./busco_msa/${gene}/${gene}.fasta, generating a fasta file for each shared single copy ortholog present in all genomes included in this study (about 400 of the possible 3131 nematode BUSCOs). Each file should contain 67 sequences, one for each species. If you head one of the files, it should look like:
+Your output is ./busco_msa/${BUSCO_ID}/${BUSCO_ID}.fasta, generating a fasta file for each shared single copy ortholog present in all genomes included in this study (about 400 of the possible 3131 nematode BUSCOs). Each file should contain 67 sequences, one for each species. If you head one of the files, it should look like:
 ```
 >AF16_NC_013486_2_6886414_6898962
 ATGATACGCTGGAAGTACGGAATTCACTACCTCATATGGCTCCTTCTCGTGCTGCATTTG
