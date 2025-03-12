@@ -210,7 +210,9 @@ TCTTACTTACAAGACTCTTTCTCAATTGAATATCGTCAGATTAACCCGGATAAGAAGTTT
 <details>
     <summary><b>4. Multiple sequence alignment and trimming</b></summary>
 
-mafft.sh was created with the help of @dmora127 (arrays are still a bit over my head)
+<br>
+
+mafft.sh was created with the help of [Daniel Morales](https://github.com/dmora127) (arrays are still a bit over my head)
 ```
 vi mafft.sh
 ```
