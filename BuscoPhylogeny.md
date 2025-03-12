@@ -321,7 +321,7 @@ done < com.txt
 ```
 sbatch clipkit.sh
 ```
-The output is a directory called total with all trimmed alignments for each BUSCO_ID.
+The output is a directory called total with all trimmed alignments for each BUSCO_ID. This is directly input into AMAS, which concatentates everything together. 
 
 </details>
 
@@ -329,15 +329,80 @@ The output is a directory called total with all trimmed alignments for each BUSC
 <summary><b>5. AMAS and IQTREE</b></summary>
 
 ```
-# get partition file with AMAS
-#module load mamba/23.1.0-4
-#source activate AMAS
+vi AMAS.sh
+```
+```
+#!/bin/bash
 
-#python3 /home/data/jfierst/veggers/programs/AMAS/amas/AMAS.py concat -c 40 -f fasta -d dna --part-format raxml -i ${WORKING_DIR}/busco_msa/total/*
+#SBATCH --account iacc_jfierst
+#SBATCH --qos highmem1
+#SBATCH --partition highmem1
+#SBATCH --output=output_AMAS.log
+
+WORKING_DIR=/home/data/jfierst/veggers/RhabditinaPhylogeny
+
+# get partition file with AMAS
+module load mamba/23.1.0-4
+source activate AMAS
+
+python3 /home/veggers/.conda/envs/AMAS/lib/python3.1/site-packages/amas/AMAS.py concat -c 40 -f fasta -d dna --part-format raxml -i ${WORKING_DIR}/busco_msa/total/*
+```
+```
+sbatch AMAS.sh
+```
+The output of AMAS is many files, but the ones necessary for iqtree are concatenated.out and partitions.txt. Concatenated.out looks like a basic msa, but partitions.txt looks like:
+```
+DNA, p1_0at6231 = 1-24842
+DNA, p2_10128at6231 = 24843-25421
+DNA, p3_1013at6231 = 25422-27559
+DNA, p4_1019at6231 = 27560-31863
+DNA, p5_1022at6231 = 31864-34703
+DNA, p6_10271at6231 = 34704-35192
+DNA, p7_10449at6231 = 35193-36931
+DNA, p8_10555at6231 = 36932-37143
+DNA, p9_1055at6231 = 37144-40455
+DNA, p10_1057at6231 = 40456-44196
+```
+```
+vi iqtree.sh
+```
+```
+#!/bin/bash
+
+#SBATCH --account iacc_jfierst
+#SBATCH --qos highmem1
+#SBATCH --partition highmem1
+#SBATCH --output=output_iqtree.log
 
 # iqtree
 module load iqtree-2-gcc-8.2.0
 
 iqtree2 -s concatenated.out -spp partitions.txt -m MFP+MERGE -bb 1000 -alrt 1000 -nt 40
+```
+```
+sbatch iqtree.sh
+```
+Here, I am running IQTREE with 1000 ultrafast bootstraps, 1000 non-parametric bootstraps when calculating branch support, 40 cores (although I should've changed it to AUTO for efficiency; it actually runs quicker with AUTO), model MFP+MERGE (takes forever, but considers the FreeRate heterogeneity and full partitioning when finding the best model). More information about running IQTREE with multi-gene alignments is located [here](http://www.iqtree.org/doc/Advanced-Tutorial#partitioned-analysis-for-multi-gene-alignments)
+
+The output is partitions.txt.treefile, which looks like this:
+```
+(AF16:0.0360948784,((((((((((((((((((APS25:0.0018678699,JU3284:0.0018810249)100/100:0.1163990427,APS7:0.1319589111)100/100:0.0608725040,JU1809:0.1583178639)
+100/100:0.1307388871,APS4:0.2419075684)100/100:0.3455125949,LIT:0.3974330497)100/100:0.0505584536,(((((CEW1:0.0049786172,JU75:0.0052558929)100/100:0.1164727
+799,PS2068:0.1260467004)100/100:0.1345245314,(DF5083:0.0034036025,TWN1984:0.0030705919)100/100:0.2263951908)100/100:0.0578284927,(((((DF5000:0.0038635504,PS
+1017:0.0038255843)100/100:0.1093600471,(DF5033:0.1010046002,SB194:0.0860062220)100/100:0.0781092942)100/100:0.0416104677,JU1917:0.1562038833)100/100:0.08572
+30601,JU1182:0.2380364629)100/100:0.0916852149,(DF5120:0.3297932504,((JU1382:0.0214352925,PF1305:0.0179165810)100/100:0.1410491704,TWN1964:0.1543756926)100/
+100:0.1545544514)100/100:0.0432587585)100/100:0.0597799311)100/100:0.1251856757,(OM:0.1160437805,PB127:0.1144971762)100/100:0.2111905264)100/100:0.184954776
+8)100/100:0.0812213221,(Aroian:0.3225749365,(((BAKE:0.0204474491,KANDY:0.0202197354)100/100:0.2117406457,MIMR:0.2587155257)100/100:0.0389337863,ISE:0.271157
+2446)100/100:0.0591299693)100/100:0.2765289224)100/100:0.0531732697,(DF5013:0.4738241102,LJ9110:0.6171875129)100/100:0.2863359818)100/100:0.1939674361,(MONO
+:0.3873540954,NKZ352:0.3135919342)100/100:0.1208608430)100/100:0.0576101140,NIC534:0.5178629013)100/100:0.1716473333,(BOV:0.3032805622,PLIC:0.4587876532)100
+/100:0.0668071367)100/100:0.0536597177,(((DF5070:0.0019887291,DF5112:0.0019311904)100/100:0.3059555847,JU1968:0.2798343690)100/100:0.0520382609,((DF5173:0.1
+653909993,JU2809:0.1200158458)100/100:0.0691476535,PS1010:0.1865499700)100/100:0.1776181078)100/100:0.0504440469)100/100:0.0458346380,JU2585:0.3170641149)10
+0/100:0.1546074816,((DF5081:0.2016586133,EG5942:0.1965976741)100/100:0.0492692613,((JU1286:0.1061341342,JU2788:0.1003533933)100/100:0.1281930713,(JU2083:0.1
+526709402,QG2083:0.1526006637)100/100:0.0558294357)100/100:0.0355223892)100/100:0.0802588806)100/100:0.0696568839,((CB4856:0.0004800206,(N2:0.0002919825,SX3
+368:0.0002577068)100/100:0.0006535728)100/100:0.1809939089,NKZ35:0.2358158525)100/100:0.0335453933)100/100:0.0365866279,(CFB2252:0.1612466023,(((JU1373:0.00
+36541963,(NIC203:0.0002461902,NIC58:0.0003124425)100/100:0.0018415094)100/100:0.1209003210,JU1904:0.1024184812)100/100:0.0526800517,JU1771:0.1474037277)91.6
+/92:0.0173414241)100/100:0.0335631435)100/100:0.0241127034,(((EM464:0.0016255723,PX356:0.0016735152)100/100:0.0060516888,(PX439:0.0089289843,PX506:0.0090409
+872)100/100:0.0029715773)100/100:0.0194782151,PX534:0.0259625520)100/100:0.1313676421)100/100:0.0418616628,(JU2190:0.1037217423,JU800:0.0961467450)100/100:0
+.0545592712)100/100:0.1154007555,JU1421:0.0309183038);
 ```
 </details>
