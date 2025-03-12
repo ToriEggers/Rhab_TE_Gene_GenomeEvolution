@@ -41,6 +41,8 @@ done < busco_list.txt
 ```
 sbatch busco.sh
 ```
-Takes less than a day to get through all 70 genomes. 
+Takes less than a day to get through all 70 genomes.
+
+Make sure that all the buscos worked. If they didn't why? probably because fna files are still gzipped or something. Also, make sure that the busco is good quality, although good quality is sort of subjective with organism of study. Here I define good quality as not too many duplicates. 3 species were removed from the analysis for having more than 5% duplicate BUSCOs.
 
 </details> 
