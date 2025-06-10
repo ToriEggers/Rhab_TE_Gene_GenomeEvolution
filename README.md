@@ -2,6 +2,8 @@
 
 Project to investigate genome evolution across Rhabdiditae Nematodes plus Pristionchus as outgroup species.
 
+All compute was done between FIU's HPC and SDSC Expanse via ACCESS allocation BIO240239. Due to jumping between systems some of the paths in the scripts may be screwy.
+
 [1. Data.md](https://github.com/ToriEggers/RhabditinaPCA/blob/main/Data.md)
 
 [2. BuscoPhylogeny.md](https://github.com/ToriEggers/RhabditinaPCA/blob/main/BuscoPhylogeny.md)
