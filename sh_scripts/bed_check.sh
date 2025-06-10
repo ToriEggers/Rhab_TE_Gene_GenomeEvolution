@@ -6,7 +6,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodes=1
 #SBATCH --partition=shared
-#SBATCH -t 20:00:00
+#SBATCH -t 10:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=vegge003@fiu.edu
 
