@@ -1,5 +1,11 @@
+## Comparative Genomics and Phylogenomics of Rhabdiditae Nematodes ###
 
-## Download RNA data:
+All preparation for RNA evidence for BRAKER3 was done in scratch directory.
+This includes downloading RNA data from NCBI (aimed for total RNA seq illumina data), alignment with STAR, and indexing/sorting with samtools. Once the bam files were created successfully, they were moved to the directory containing the braker.sif file.
+
+***Download RNA data***
+
+[RNA_accessions.txt]()
 
 download.sh 
 ```
