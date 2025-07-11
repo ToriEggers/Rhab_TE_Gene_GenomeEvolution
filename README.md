@@ -8,5 +8,6 @@ All compute was done between FIU's HPC and SDSC Expanse via ACCESS allocation BI
 
 [2. BuscoPhylogeny.md](https://github.com/ToriEggers/RhabditinaPCA/blob/main/BuscoPhylogeny.md)
 
-[3. GeneAnnotations.md]() and [RepeatAnnotations.md]()
+[3. GeneAnnotations.md](https://github.com/ToriEggers/Rhabditina_Repeats_and_ConservedElements_GenomeEvolution/blob/main/GeneAnnotations.md) and [RepeatAnnotations.md]()
+
 4. Conserved elements.md
