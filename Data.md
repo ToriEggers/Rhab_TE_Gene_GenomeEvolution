@@ -13,8 +13,6 @@ https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/018/990/105/GCA_018990105.1_ASM1899
 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/186/765/GCA_000186765.1_Caenorhabditis_sp11_JU1373-3.0.1/GCA_000186765.1_Caenorhabditis_sp11_JU1373-3.0.1_genomic.fna.gz
 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/958/450/365/GCA_958450365.1_M.belari_Hybrid_genome_bis/GCA_958450365.1_M.belari_Hybrid_genome_bis_genomic.fna.gz
 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/964/264/295/GCA_964264295.1_nxAuaSpen2.1/GCA_964264295.1_nxAuaSpen2.1_genomic.fna.gz
-na
-na
 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/037/178/855/GCA_037178855.1_ASM3717885v1/GCA_037178855.1_ASM3717885v1_genomic.fna.gz
 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/038/088/335/GCA_038088335.1_ASM3808833v1/GCA_038088335.1_ASM3808833v1_genomic.fna.gz
 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/904/845/305/GCA_904845305.1_CAUJ/GCA_904845305.1_CAUJ_genomic.fna.gz
@@ -105,8 +103,6 @@ EM464
 JU1373
 JU2817
 JU3284
-JU4110
-JU4121
 JU75
 LJ9110
 NKZ352
