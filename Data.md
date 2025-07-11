@@ -187,3 +187,5 @@ OST
 PS312
 ```
 My directories are set up so that RhabditinaPhylogeny contains the entire project, RhabditinaPhylogeny_NCBI contains all species/stains as their own directory, and then within each respective directory is the NCBI data for that species/strain. This includes mostly just fasta assemblies but for some species which are well annotated, like elegans, gff files from refseq as well. So, a path would look like: /RhabditinaPhylogeny/RhabditinaPhylogeny_NCBI/AF16/GCA_030370435.1_ASM3037043v1_genomic.fna.gz for example
+
+It takes some time to set up but it allows for easier automation for subsequent work.
