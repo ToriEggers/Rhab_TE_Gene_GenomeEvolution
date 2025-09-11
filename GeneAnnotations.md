@@ -202,6 +202,50 @@ JU2585 and NIC534 fail because there is too little intron evidence.
 </details>
 
 <details>
+<summary><b>Predict Gens with BRAKER3 using isoseq data</b></summary>
+
+Following directions from [BRAKER3](https://github.com/Gaius-Augustus/BRAKER) github.
+
+```
+vi fiu_singularity_braker3_isoseq.sh
+```
+
+```
+#!/bin/bash
+
+#SBATCH --job-name=braker3_isoseq
+#SBATCH --output=./logs/braker3_isoseq.%j.out
+#SBATCH --account=iacc_jfierst
+#SBATCH --cpus-per-task=8
+#SBATCH --nodes=1
+#SBATCH --partition=highmem1
+#SBATCH --qos=highmem1
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=vegge003@fiu.edu
+
+#load modules
+module load singularity-3.8.7
+module load proxy
+
+#export paths
+export BRAKER_SIF=/home/data/jfierst/veggers/RhabditinaPhylogeny/braker3_lr.sif
+
+cat ./RhabditinaPhylogeny_repeatmasker/PX506/PX506.masked | cut -f 1 -d " " > PX506.masked
+
+#organize and remove working directory if it already exists
+wd=./RhabditinaPhylogeny_braker3/PX506_braker3
+
+if [ -d $wd ]; then
+    rm -r $wd
+fi
+
+#run braker
+singularity exec  -B ${PWD}:${PWD}  ${BRAKER_SIF} braker.pl --genome=PX506.masked --prot_seq=refseq_db.faa --bam=PX506_isoseq.bam --workingdir=${wd} --GENEMARK_PATH=${ETP}/gmes --AUGUSTUS_CONFIG_PATH=/home/veggers/.augustus --threads 8 --softmasking --busco_lineage nematoda_odb10
+```
+
+</details>
+
+<details>
 <summary><b>Predict Genes with BRAKER2</b></summary>
 
 </details>
