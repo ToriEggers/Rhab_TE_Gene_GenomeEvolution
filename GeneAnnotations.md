@@ -230,6 +230,8 @@ move PX506_isoseq.bam to /home/data/jfierst/veggers/RhabditinaPhylogeny/.
 
 </details>
 
+Before beginning gene prediction, you will need to complete the through repeatmasker on RepeatAnnotations.md
+
 <details>
 <summary><b>Predict Genes with BRAKER3</b></summary>
 
@@ -358,7 +360,15 @@ singularity exec  -B ${PWD}:${PWD}  ${BRAKER_SIF} braker.pl --genome=PX506.maske
 <details>
 <summary><b>Predict Genes with BRAKER2</b></summary>
 
- ```
+BOV, LJ9110, LIT, JU2585, NIC534, and NIC394 were annotated using BRAKER2 due to difficulties with BRAKER3. LIT subsequently failed with BRAKER2 as well and was left out of all analyses.
+
+The same container built and used for braker3 can also be used for braker2. They are the same program, braker2 just doesn't incorporate RNA evidence. Remember to copy refseq_db.faa from nematoda_odb10 to the same directory containing braker3.sif.
+
+```
+vi  fiu_array_singularity_braker2.sh
+```
+
+```
 #!/bin/bash
 #SBATCH --job-name=braker2
 #SBATCH --output=./logs/braker2.%j.%N.out
@@ -389,7 +399,6 @@ cp ./RhabditinaPhylogeny_repeatmasker/${SPECIES}/*.masked ./${SPECIES}.masked
 sleep $((SLURM_ARRAY_TASK_ID * 25))
 
 #organize and remove working directory if it already exists
-
 wd=./RhabditinaPhylogeny_braker2/${SPECIES}_braker2
 
 if [ -d $wd ]; then
@@ -397,8 +406,7 @@ if [ -d $wd ]; then
 fi
 
 #run braker
-singularity exec  -B ${PWD}:${PWD}  ${BRAKER_SIF} braker.pl --genome=${SPECIES}.masked --prot_seq=refseq_db.faa --workingdir=${wd} --GENEMARK_PATH=${ETP}/gmes --AUGUSTUS_CONFIG_PATH=/home/
-veggers/.augustus --threads 8 --softmasking --busco_lineage nematoda_odb10
+singularity exec  -B ${PWD}:${PWD}  ${BRAKER_SIF} braker.pl --genome=${SPECIES}.masked --prot_seq=refseq_db.faa --workingdir=${wd} --GENEMARK_PATH=${ETP}/gmes --AUGUSTUS_CONFIG_PATH=/home/veggers/.augustus --threads 8 --softmasking --busco_lineage nematoda_odb10
 ```
 
 </details>
