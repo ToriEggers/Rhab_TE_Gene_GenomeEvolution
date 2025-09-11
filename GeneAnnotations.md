@@ -282,9 +282,18 @@ JU2585 and NIC534 fail because there is too little intron evidence.
 </details>
 
 <details>
-<summary><b>Predict Gens with BRAKER3 using isoseq data</b></summary>
+<summary><b>Predict Genes with BRAKER3 using isoseq data</b></summary>
 
 Following directions from [BRAKER3](https://github.com/Gaius-Augustus/BRAKER) github.
+
+Get container:
+
+```
+module load singularity-3.8.7
+module load proxy
+singularity build braker3_lr.sif docker://teambraker/braker3:isoseq
+```
+Also make sure that you've moved PX506_isoseq.bam and refseq_db.faa to the same directory containing braker3_lr.sif
 
 ```
 vi fiu_singularity_braker3_isoseq.sh
