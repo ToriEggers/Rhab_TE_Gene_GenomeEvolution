@@ -4,7 +4,7 @@
 
 All gene annotation work was done on the FIU HPC.
 
-Before beginning, please complete up through repeatmasker on repeatAnnotation.md
+Before beginning, please complete up through repeatmasker on repeatAnnotations.md
 
 All preparation for RNA evidence for BRAKER3 was done in scratch directory, which deletes files last touched over 30 days.
 Preparation of RNA evidence includes downloading RNA data from NCBI (aimed for total RNA seq illumina data), alignment with STAR, and indexing/sorting with samtools. Once the bam files were created successfully, they were moved to the directory containing the braker.sif file.
