@@ -200,3 +200,18 @@ BOV, LJ9110, and LIT will all fail because there is not enough RNA seq evidence,
 JU2585 and NIC534 fail because there is too little intron evidence.
 
 </details>
+
+<details>
+<summary><b>Predict Genes with BRAKER2</b></summary>
+
+</details>
+
+<details>
+<summary><b>Get longest isoform with AGAT</b></summary>
+
+</details>
+
+<details>
+<summary><b>Predict Function with InterProScan</b></summary>
+
+</details>
