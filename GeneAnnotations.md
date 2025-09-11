@@ -52,8 +52,10 @@ while read -r line; do
         rm -r ${accession} #delete prefetch created directory
 done < ${INPUT_FILE}
 ```
+<\details>
 
-Now we can align the reads with STAR:
+<details>
+<summary>Align RNA reads to genome with STAR</summary>
 
 STAR.txt has a list of IDs:
 ```
