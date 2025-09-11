@@ -52,7 +52,7 @@ while read -r line; do
         rm -r ${accession} #delete prefetch created directory
 done < ${INPUT_FILE}
 ```
-<\details>
+</details>
 
 <details>
 <summary>Align RNA reads to genome with STAR</summary>
