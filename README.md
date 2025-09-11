@@ -10,4 +10,7 @@ All compute was done between FIU's HPC and SDSC Expanse via ACCESS allocation BI
 
 [3. GeneAnnotations.md](https://github.com/ToriEggers/Rhabditina_Repeats_and_ConservedElements_GenomeEvolution/blob/main/GeneAnnotations.md) and [RepeatAnnotations.md]()
 
-4. Conserved elements.md
+5. Argonaute Identification
+6. Nigon element classification
+4. Conserved elements
+5. Phylogenomic analysis
