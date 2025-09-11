@@ -4,6 +4,8 @@
 
 All gene annotation work was done on the FIU HPC.
 
+Before beginning, please complete up through repeatmasker on repeatAnnotation.md
+
 All preparation for RNA evidence for BRAKER3 was done in scratch directory, which deletes files last touched over 30 days.
 Preparation of RNA evidence includes downloading RNA data from NCBI (aimed for total RNA seq illumina data), alignment with STAR, and indexing/sorting with samtools. Once the bam files were created successfully, they were moved to the directory containing the braker.sif file.
 
@@ -229,8 +231,6 @@ samtools view -bS --threads 40 PX506_isoseq.sam -o PX506_isoseq.bam
 move PX506_isoseq.bam to /home/data/jfierst/veggers/RhabditinaPhylogeny/.
 
 </details>
-
-Before beginning gene prediction, you will need to complete the steps up through repeatmasker on RepeatAnnotations.md
 
 <details>
 <summary><b>Predict Genes with BRAKER3</b></summary>
