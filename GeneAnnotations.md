@@ -391,3 +391,8 @@ veggers/.augustus --threads 8 --softmasking --busco_lineage nematoda_odb10
 <summary><b>Predict Function with InterProScan</b></summary>
 
 </details>
+
+<details>
+<summary><b>Predict Orthologues with Orthofinder</b></summary>
+
+</details>
