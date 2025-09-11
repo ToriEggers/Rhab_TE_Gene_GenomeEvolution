@@ -230,7 +230,7 @@ move PX506_isoseq.bam to /home/data/jfierst/veggers/RhabditinaPhylogeny/.
 
 </details>
 
-Before beginning gene prediction, you will need to complete the through repeatmasker on RepeatAnnotations.md
+Before beginning gene prediction, you will need to complete the steps up through repeatmasker on RepeatAnnotations.md
 
 <details>
 <summary><b>Predict Genes with BRAKER3</b></summary>
