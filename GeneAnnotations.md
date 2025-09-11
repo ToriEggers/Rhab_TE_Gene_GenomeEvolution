@@ -18,6 +18,7 @@ contains 2 columns separated by a tab, ID and ACCESSION. It is the input to the 
 vi RNA_accessions.txt
 ```
 
+copy/paste the following:
 ```
 AF72	ERR4264631
 BOV	ERR3610811
@@ -202,6 +203,10 @@ Following directions from [BRAKER3](https://github.com/Gaius-Augustus/BRAKER) gi
 PX506 only had isoseq RNA reads available, which requires a bit of a different alignment process:
 
 ```
+vi isoseq_align.sh
+```
+
+```
 #!/bin/bash
 
 #SBATCH --account iacc_jfierst
@@ -227,6 +232,23 @@ move PX506_isoseq.bam to /home/data/jfierst/veggers/RhabditinaPhylogeny/.
 
 <details>
 <summary><b>Predict Genes with BRAKER3</b></summary>
+
+cd to RhabditinaPhylogeny
+
+Get container:
+
+```
+module load singularity-3.8.7
+module load proxy
+singularity build braker3.sif docker://teambraker/braker3:latest
+```
+
+Move the refseq_db.faa from nematoda_odb10 to the same directory as braker3.sif
+
+
+```
+vi fiu_array_singularity_braker3.sh
+```
 
 ```
 #!/bin/bash
@@ -259,10 +281,9 @@ cat ./RhabditinaPhylogeny_repeatmasker/${SPECIES}/${SPECIES}.masked | cut -f 1 -
 cp /scratch/jfierst/tori/${SPECIES}_STAR/${SPECIES}_Aligned.out.bam ./${SPECIES}_Aligned.out.bam
 
 #sleep for a few seconds so braker doesn't try to name multiple species the same (causes write permission failures otherwise)
-#sleep $((SLURM_ARRAY_TASK_ID * 25))
+sleep $((SLURM_ARRAY_TASK_ID * 25))
 
 #organize and remove working directory if it already exists
-
 wd=./RhabditinaPhylogeny_braker3/${SPECIES}_braker3
 
 if [ -d $wd ]; then
