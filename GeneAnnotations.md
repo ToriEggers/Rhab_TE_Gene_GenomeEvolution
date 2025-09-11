@@ -7,7 +7,7 @@ This includes downloading RNA data from NCBI (aimed for total RNA seq illumina d
 
 <details>
 
-<summary>Download RNA data</summary>
+<summary><b>Download RNA data</b></summary>
 
 The file: RNA_accessions.txt
 contains 2 columns separated by a tab, ID and ACCESSION. It is the input to the following script which uses sratoolkit v.3.0.0 to (1)prefetch the accession of the RNA seq data and (2)fastq-dump the RNA reads into a directory named by the ID.
@@ -55,7 +55,7 @@ done < ${INPUT_FILE}
 </details>
 
 <details>
-<summary>Align RNA reads to genome with STAR</summary>
+<summary><b>Align RNA reads to genome with STAR</b></summary>
 
 STAR.txt has a list of IDs:
 ```
@@ -107,4 +107,9 @@ STAR \
 --readFilesIn /scratch/jfierst/tori/${SPECIES}/${SPECIES}_1.fastq /scratch/jfierst/tori/${SPECIES}/${SPECIES}_2.fastq --out
 FileNamePrefix /scratch/jfierst/tori/${SPECIES}_STAR/${SPECIES}_
 ```
+</details>
+
+<details>
+<summary><b>Predict Genes with BRAKER3</b></summary>
+
 </details>
