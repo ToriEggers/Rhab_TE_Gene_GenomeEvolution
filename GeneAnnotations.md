@@ -534,4 +534,58 @@ done < species.txt
 <details>
 <summary><b>Predict Orthologues with Orthofinder</b></summary>
 
+```
+vi get_aa_files.sh
+```
+
+```
+#!/bin/bash
+
+#directories
+wd=/home/data/jfierst/veggers/RhabditinaPhylogeny
+mkdir -p genes
+
+#paths
+export braker2=./RhabditinaPhylogeny_braker2
+export braker3=./RhabditinaPhylogeny_braker3
+
+while read -r species; do
+        if [[ -f ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform.aa ]]; then
+                cp ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform.aa ./genes/${species}_braker3_longest_isoform.fa
+        else
+                if [[ -f ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_isoform.aa ]]; then
+                        cp ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_isoform.aa ./genes/${species}_braker2_longest_isoform.fa
+                else
+                        echo -e "${species} braker.aa not found"
+                fi
+        fi
+done < species.txt
+```
+
+
+```
+vi orthorfinder.sh
+```
+
+```
+#!/bin/bash
+
+#SBATCH --account iacc_jfierst
+#SBATCH --qos highmem1
+#SBATCH --partition highmem1
+#SBATCH --output=out_ortho_genes%j.log
+#SBATCH --job-name=ortho_finder
+#SBATCH --cpus-per-task=40
+#SBATCH --mail-user=vegge003@fiu.edu
+#SBATCH --mail-type=ALL
+
+# Load necessary modules
+#module load orthofinder/2.5.5-none-none-tuk2dtl
+module load orthofinder-2.3.7
+
+INPUT_DIR=/home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_orthofinder/genes
+
+orthofinder -f "${INPUT_DIR}" -t 40
+```
+
 </details>
