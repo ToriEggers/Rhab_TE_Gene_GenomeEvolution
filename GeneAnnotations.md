@@ -414,6 +414,116 @@ singularity exec  -B ${PWD}:${PWD}  ${BRAKER_SIF} braker.pl --genome=${SPECIES}.
 <details>
 <summary><b>Get longest isoform with AGAT</b></summary>
 
+The braker.aa files contain coding sequences. However, there can be multiple coding sequences per gene sequence due to alternative splicing. This will influence downstream analysis (such as orthofinder and cafe5). Thus, we first need to obtain only the longest isoform per gene sequence. AGAT was used to do this in the script below. Note that there were a few problems with mismatched contig names between the fasta and gtf files. Simple sed, cut, awk scripts were used to fix this when an error occurred.
+
+These scripts use a list of IDs called species.txt for input.
+
+```
+vi longest_isoform.sh
+```
+
+```
+#!/bin/bash
+
+#SBATCH --account iacc_jfierst
+#SBATCH --qos highmem1
+#SBATCH --partition highmem1
+#SBATCH --output=./longest_isoform_%j.log
+
+#directories
+wd=/home/data/jfierst/veggers/RhabditinaPhylogeny
+
+module load mamba-4.12.0-2
+source activate agat
+
+#paths
+export braker2=RhabditinaPhylogeny_braker2
+export braker3=RhabditinaPhylogeny_braker3
+
+while read -r species; do
+
+        #cat ${wd}/RhabditinaPhylogeny_repeatmasker/${species}/${species}.masked | sed 's/ /_/g' > ${species}.masked
+
+        cat ${wd}/RhabditinaPhylogeny_repeatmasker/${species}/${species}.masked | cut -f 1 -d " " > ${species}.masked
+
+        if [[ -f ${wd}/${braker3}/${species}_braker3/braker.gtf ]]; then
+                #/home/veggers/.conda/envs/agat/bin/agat_sp_keep_longest_isoform.pl -gff ${wd}/${braker3}/${species}_braker3/*.gtf -o ${wd}/${braker3}/${spe
+cies}_braker3/${species}_braker3_longest_isoform.gtf
+                /home/veggers/.conda/envs/agat/bin/agat_sp_extract_sequences.pl -g ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform.gt
+f -f ${species}.masked -p -o ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform.aa
+        else
+                if [[ -f ${wd}/${braker2}/${species}_braker2/braker.gtf ]]; then
+                        #/home/veggers/.conda/envs/agat/bin/agat_sp_keep_longest_isoform.pl -gff ${wd}/${braker2}/${species}_braker2/*.gtf -o ${wd}/${braker
+2}/${species}_braker2/${species}_braker2_longest_isoform.gtf
+                        /home/veggers/.conda/envs/agat/bin/agat_sp_extract_sequences.pl -g ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_is
+oform.gtf -f ${species}.masked -p -o ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_isoform.aa
+                else
+                        echo -e "${species} braker.gtf not found"
+                fi
+        fi
+
+        rm ${species}.masked.index.pag
+        rm ${species}.masked.index.dir
+        rm ${species}_braker3_longest_isoform.agat.log
+
+done < species.txt
+```
+
+```
+vi gene_summary.sh
+```
+
+```
+#!/bin/bash
+
+#SBATCH --account iacc_jfierst
+#SBATCH --qos highmem1
+#SBATCH --partition highmem1
+#SBATCH --output=./gene_summary_%j.log
+
+#directories
+wd=/home/data/jfierst/veggers/RhabditinaPhylogeny
+
+#paths
+export braker2=./RhabditinaPhylogeny_braker2
+export braker3=./RhabditinaPhylogeny_braker3
+
+#begin output
+echo -e "species\tgene_count\ttranscript_count\taa_count\tlongest_isoform_gene_count\tlongest_isoform_transcript_count\tlongest_isoform_aa_count" > gene_summary.txt
+
+while read -r species; do
+
+        if find "${wd}/${braker3}/${species}_braker3" -maxdepth 1 -name "*.gtf" | grep -q .; then
+                gene_count=$(cat ${wd}/${braker3}/${species}_braker3/braker.gtf | cut -f 3 | grep -c "gene")
+                transcript_count=$(cat ${wd}/${braker3}/${species}_braker3/braker.gtf | cut -f 3 | grep -c "transcript")
+                aa_count=$(grep -c ">" ${wd}/${braker3}/${species}_braker3/braker.aa)
+                longest_isoform_gene_count=$(cat ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform.gtf | cut -f 3 | grep -c "gene")
+                longest_isoform_transcript_count=$(cat ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform.gtf | cut -f 3 | grep -c "transcript")
+                longest_isoform_aa_count=$(grep -c ">" ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform.aa)
+
+                echo -e "${species}\t${gene_count}\t${transcript_count}\t${aa_count}\t${longest_isoform_gene_count}\t${longest_isoform_transcript_count}\t${longest_isoform_aa_count}" >> ge
+ne_summary.txt
+
+        else
+                if find "${wd}/${braker2}/${species}_braker2" -maxdepth 1 -name "*.gtf" | grep -q .; then
+                        gene_count=$(cat ${wd}/${braker2}/${species}_braker2/braker.gtf | cut -f 3 | grep -c "gene")
+                        transcript_count=$(cat ${wd}/${braker2}/${species}_braker2/braker.gtf | cut -f 3 | grep -c "transcript")
+                        aa_count=$(grep -c ">" ${wd}/${braker2}/${species}_braker2/braker.aa)
+                        longest_isoform_gene_count=$(cat ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_isoform.gtf | cut -f 3 | grep -c "gene")
+                        longest_isoform_transcript_count=$(cat ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_isoform.gtf | cut -f 3 | grep -c "transcript")
+                        longest_isoform_aa_count=$(grep -c ">" ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_isoform.aa)
+
+                        echo -e "${species}\t${gene_count}\t${transcript_count}\t${aa_count}\t${longest_isoform_gene_count}\t${longest_isoform_transcript_count}\t${longest_isoform_aa_count
+}" >> gene_summary.txt
+
+                else
+                        echo -e "${species} braker.gtf not found"
+                fi
+        fi
+
+done < species.txt
+```
+
 </details>
 
 <details>
