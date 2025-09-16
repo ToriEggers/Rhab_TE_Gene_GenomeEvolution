@@ -142,20 +142,7 @@ done < ${INPUT_FILE}
 <details>
 <summary><b>Align illumina RNA reads to genome with STAR</b></summary>
 
-STAR.txt has a list of IDs:
-
-```
-vi STAR.txt
-```
-
-```
-QG555
-NIC564
-RS0144
-RS5460
-RS5133
-...
-```
+STAR.txt has a list of IDs
 
 STAR.sh is an array script to generate a genome index of each species and then map the rna reads to that index. --outSAMstrandField intronMotif and --outSAMtype BAM Unsorted are required for latter input into BRAKER3
 ```
@@ -194,6 +181,9 @@ STAR \
 --readFilesIn /scratch/jfierst/tori/${SPECIES}/${SPECIES}_1.fastq /scratch/jfierst/tori/${SPECIES}/${SPECIES}_2.fastq --out
 FileNamePrefix /scratch/jfierst/tori/${SPECIES}_STAR/${SPECIES}_
 ```
+
+STAR:v.2.6.1a_08-27
+
 </details>
 
 <details>
@@ -296,6 +286,10 @@ fi
 singularity exec  -B ${PWD}:${PWD}  ${BRAKER_SIF} braker.pl --genome=${SPECIES}.masked --prot_seq=refseq_db.faa --bam=${SPECIES}_Aligned.out.bam --workingdir=${wd} --GENEMARK_PATH=${ETP}/gmes --AUGUSTUS_CONFIG_PATH=/home/veggers/.augustus --threads 8 --softmasking --busco_lineage nematoda_odb10
 ```
 
+runs in less than 3 days
+
+braker.pl:v.3.0.8
+
 BRAKER renames things the same thing and so if the jobs aren't spaced out enough you'll get an error about a species directory not existing or being writable. That's why I added the sleep command in the script above, however it does waste some computational resources. sloppy fix but it works sometimes. You will still get an error even with the sleep. Just modify the BRAKER3.txt file with the genomes that failed due to this issue and rerun, they'll all work eventually.
 
 BOV, LJ9110, and LIT will all fail because there is not enough RNA seq evidence, likely because these are parasitic species and so the RNA available is from the infected organism rather than the nematodes themselves.
@@ -355,6 +349,10 @@ fi
 singularity exec  -B ${PWD}:${PWD}  ${BRAKER_SIF} braker.pl --genome=PX506.masked --prot_seq=refseq_db.faa --bam=PX506_isoseq.bam --workingdir=${wd} --GENEMARK_PATH=${ETP}/gmes --AUGUSTUS_CONFIG_PATH=/home/veggers/.augustus --threads 8 --softmasking --busco_lineage nematoda_odb10
 ```
 
+runs in less than 3 days
+
+braker.pl:v.3.0.8
+
 </details>
 
 <details>
@@ -408,6 +406,10 @@ fi
 #run braker
 singularity exec  -B ${PWD}:${PWD}  ${BRAKER_SIF} braker.pl --genome=${SPECIES}.masked --prot_seq=refseq_db.faa --workingdir=${wd} --GENEMARK_PATH=${ETP}/gmes --AUGUSTUS_CONFIG_PATH=/home/veggers/.augustus --threads 8 --softmasking --busco_lineage nematoda_odb10
 ```
+
+runs in less than 3 days
+
+braker.pl:v.3.0.8
 
 </details>
 
@@ -469,6 +471,10 @@ oform.gtf -f ${species}.masked -p -o ${wd}/${braker2}/${species}_braker2/${speci
 done < species.txt
 ```
 
+runs in ~ 6 hours
+
+AGAT:v1.4.1
+
 ```
 vi gene_summary.sh
 ```
@@ -523,6 +529,7 @@ ne_summary.txt
 
 done < species.txt
 ```
+runs in ~2 minutes
 
 </details>
 
@@ -562,6 +569,16 @@ while read -r species; do
 done < species.txt
 ```
 
+```
+bash get_aa_files.sh
+```
+
+```
+module load mamba-4.12.0-2
+conda create -n of3_env python=3.10
+source activate of3_env
+mamba install orthofinder
+```
 
 ```
 vi orthorfinder.sh
@@ -579,13 +596,16 @@ vi orthorfinder.sh
 #SBATCH --mail-user=vegge003@fiu.edu
 #SBATCH --mail-type=ALL
 
-# Load necessary modules
-#module load orthofinder/2.5.5-none-none-tuk2dtl
-module load orthofinder-2.3.7
+module load mamba-4.12.0-2
+source activate of3_env
 
 INPUT_DIR=/home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_orthofinder/genes
 
 orthofinder -f "${INPUT_DIR}" -t 40
 ```
+runs for ~12 hours
+
+OrthoFinder:v3.1.0
+
 
 </details>
