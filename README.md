@@ -12,6 +12,6 @@ All compute was done between FIU's HPC and SDSC Expanse via ACCESS allocation BI
 
 4. Argonaute Identification
 5. Nigon element classification
-6. Gene family evolution with cafe5
+6. Gene family evolution with [cafe5](https://github.com/ToriEggers/Rhab_TE_Gene_GenomeEvolution/blob/main/cafe5.md)
 7. Conserved elements
 8. Phylogenomic analysis
