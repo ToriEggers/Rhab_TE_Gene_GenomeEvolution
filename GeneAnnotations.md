@@ -587,17 +587,17 @@ vi orthorfinder.sh
 ```
 #!/bin/bash
 
-#SBATCH --account iacc_jfierst
-#SBATCH --qos highmem1
-#SBATCH --partition highmem1
+#SBATCH --account acc_jfierst
+#SBATCH --qos standard
+#SBATCH --partition highmem1-sapphirerapids
 #SBATCH --output=out_ortho_genes%j.log
 #SBATCH --job-name=ortho_finder
 #SBATCH --cpus-per-task=40
 #SBATCH --mail-user=vegge003@fiu.edu
 #SBATCH --mail-type=ALL
 
-module load mamba-4.12.0-2
-source activate of3_env
+# Load necessary modules
+module load orthofinder/2.5.5-none-none-tuk2dtl
 
 INPUT_DIR=/home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_orthofinder/genes
 
@@ -605,7 +605,6 @@ orthofinder -f "${INPUT_DIR}" -t 40
 ```
 runs for ~12 hours
 
-OrthoFinder:v3.1.0
 
 
 </details>
