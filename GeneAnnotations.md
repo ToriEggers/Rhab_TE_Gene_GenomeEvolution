@@ -610,7 +610,7 @@ runs for ~12 hours
 </details>
 
 <details>
- <summary>Combine functional annotations with Orthofinder results using KinFin</summary>
+ <summary><b>Combine functional annotations with Orthofinder results using KinFin</b></summary>
 
 install the software using conda. There are a bunch of broken links to fix as well. 
 ```
@@ -665,5 +665,6 @@ fasta_dir=/home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_ort
 ./kinfin/kinfin --cluster_file ${orthogroups} --config_file config.txt --sequence_ids_file SequenceIDs.txt --species_ids_file SpeciesIDs.txt --fasta_dir ${f
 asta_dir} --functional_annotation functional_annotation.txt  #--tree_file ${tree}
 ```
+Runtime ~ 25 minutes
 
 </details>
