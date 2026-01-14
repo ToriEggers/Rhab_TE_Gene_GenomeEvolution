@@ -608,3 +608,62 @@ runs for ~12 hours
 
 
 </details>
+
+<details>
+ <summary>Combine functional annotations with Orthofinder results using KinFin</summary>
+
+install the software using conda. There are a bunch of broken links to fix as well. 
+```
+module load mamba/23.1.0-4
+conda create -n kinfin
+source activate kinfin
+mamba install -c conda-forge docopt==0.6.2 scipy==1.11.1 matplotlib networkx ete3 powerlaw
+git clone https://github.com/DRL/kinfin.git
+cd kinfin
+./install
+./test
+./kinfin
+ wget https://ftp.ebi.ac.uk/pub/databases/Pfam/releases/Pfam38.1/Pfam-A.clans.tsv.gz
+ mv Pfam-A.clans.tsv.gz ./kinfin/data/.
+ wget https://ftp.ebi.ac.uk/pub/databases/interpro/releases/latest/entry.list
+ mv entry.list ./kinfin/data/.
+ wget https://ftp.ebi.ac.uk/pub/databases/interpro/releases/latest/interpro2go
+ mv interpro2go ./kinfin/data/.
+```
+
+Prepare your input files
+```
+./kinfin/scripts/generate_kinfin_input.py -f /home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_orthofinder/genes
+#concatenate all 83 interpro outputs (idk if this is correct btw)
+while read -r line; do
+        cat ./RhabditinaPhylogeny_interproscan/${line}/${line}_clean_longest_isoform.faa.tsv | sed '1d' >> total_interpro.tsv
+done < species.txt
+./kinfin/scripts/iprs2table.py -i total_interpro.tsv
+```
+
+Run kinfin
+```
+#!/bin/bash
+
+#SBATCH --job-name=kinfin
+#SBATCH --account acc_jfierst
+#SBATCH --qos standard
+#SBATCH --partition highmem1-sapphirerapids
+#SBATCH --output=kinfin_%j.log
+#SBATCH --mail-type=all
+#SBATCH --mail-user=vegge003@fiu.edu
+
+module load proxy
+module load git/2.48.1-llvm-19.1.7-3prtti7
+module load miniconda3/24.7.1-none-none-mjgmhio
+source activate kinfin
+
+orthogroups=/home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_orthofinder/OrthoFinder/Results_Nov20_genes/Orthogroups/Orthogroups.txt
+tree=/home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_orthofinder/OrthoFinder/cafe5_input_tree.nwk
+fasta_dir=/home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_orthofinder/genes
+
+./kinfin/kinfin --cluster_file ${orthogroups} --config_file config.txt --sequence_ids_file SequenceIDs.txt --species_ids_file SpeciesIDs.txt --fasta_dir ${f
+asta_dir} --functional_annotation functional_annotation.txt  #--tree_file ${tree}
+```
+
+</details>
