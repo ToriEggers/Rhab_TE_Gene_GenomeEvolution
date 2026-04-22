@@ -135,3 +135,47 @@ TWN1964
 TWN1984
 VIVI
 ```
+
+Now lets subset our repeat and gene annotations by chromosome:
+```
+#!/bin/bash
+
+#SBATCH --account acc_jfierst
+#SBATCH --qos standard
+#SBATCH --partition highmem1-sapphirerapids
+#SBATCH --output out_dataByChr_%j.log
+
+#directories
+wd=/home/data/jfierst/veggers/RhabditinaPhylogeny
+braker2=./RhabditinaPhylogeny_braker2
+braker3=./RhabditinaPhylogeny_braker3
+earlgrey_v6=./RhabditinaPhylogeny_earlGrey_v6
+
+while read -r line; do
+#set variables
+        species=$(echo -e "${line}" | cut -f 1)
+        chr_number=$(echo -e "${line}" | cut -f 2)
+        chr_ID=$(echo -e "${line}" | cut -f 3)
+
+#genes
+        if [[ -f ${braker3}/${species}_braker3/${species}_braker3_longest_isoform_interpro.gtf ]]; then
+                mkdir -p ${wd}/${braker3}/${species}_braker3/by_chr
+                cat ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform_interpro.gtf | awk -v chrID="${chr_ID}" '{if($1==chrID) print}' > ${wd}/${braker3}/${species}_braker3/by_chr/${species}_${chr_number}_braker3_longest_isoform_interpro.gtf
+        elif [[ -f ${braker2}/${species}_braker2/${species}_braker2_longest_isoform_interpro.gtf ]]; then
+                mkdir -p ${wd}/${braker2}/${species}_braker2/by_chr
+                cat ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_isoform_interpro.gtf | awk -v chrID="${chr_ID}" '{if($1==chrID) print}' > ${wd}/${braker2}/${species}_braker2/by_chr/${species}_${chr_number}_braker2_longest_isoform_interpro.gtf
+
+        else
+                echo -e "${species} longest_isoform_interpro.gtf not found"
+        fi
+
+#repeats
+        if [[ -f ${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/${species}.filteredRepeats.gff ]]; then
+                mkdir -p ${wd}/${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr
+                cat ${wd}/${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/${species}.filteredRepeats.gff | awk -v chrID="${chr_ID}" '{if($1==chrID) print }' > ${wd}/${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/${species}_${chr_number}_earlgrey_v6.gff
+        else
+                echo -e "${species}.filteredRepeats.gff not found"
+        fi
+
+done < species_chr_ID_length.txt
+```
