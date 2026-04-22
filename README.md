@@ -16,5 +16,4 @@ All compute was done between FIU's HPC and SDSC Expanse via ACCESS allocation BI
    
 [7. Gene family evolution with cafe5](https://github.com/ToriEggers/Rhab_TE_Gene_GenomeEvolution/blob/main/cafe5.md)
 
-8. Conserved elements
-9. Phylogenomic analysis
+8. Phylogenomic analysis
