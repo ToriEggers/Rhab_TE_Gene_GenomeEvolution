@@ -160,10 +160,11 @@ while read -r line; do
 #genes
         if [[ -f ${braker3}/${species}_braker3/${species}_braker3_longest_isoform_interpro.gtf ]]; then
                 mkdir -p ${wd}/${braker3}/${species}_braker3/by_chr
-                cat ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform_interpro.gtf | awk -v chrID="${chr_ID}" '{if($1==chrID) print}' > ${wd}/${braker3}/${species}_braker3/by_chr/${species}_${chr_number}_braker3_longest_isoform_interpro.gtf
+                cat ${wd}/${braker3}/${species}_braker3/${species}_braker3_longest_isoform_interpro.gtf | awk '{if ($3=="transcript") print}' | awk -v chrID="${chr_ID}" '{if($1==chrID) print}' > ${wd}/${braker3}/${species}_braker3/by_chr/${species}_${chr_number}_braker3_longest_isoform_interpro.gtf
+
         elif [[ -f ${braker2}/${species}_braker2/${species}_braker2_longest_isoform_interpro.gtf ]]; then
                 mkdir -p ${wd}/${braker2}/${species}_braker2/by_chr
-                cat ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_isoform_interpro.gtf | awk -v chrID="${chr_ID}" '{if($1==chrID) print}' > ${wd}/${braker2}/${species}_braker2/by_chr/${species}_${chr_number}_braker2_longest_isoform_interpro.gtf
+                cat ${wd}/${braker2}/${species}_braker2/${species}_braker2_longest_isoform_interpro.gtf | awk '{if ($3=="transcript") print}' | awk -v chrID="${chr_ID}" '{if($1==chrID) print}' > ${wd}/${braker2}/${species}_braker2/by_chr/${species}_${chr_number}_braker2_longest_isoform_interpro.gtf
 
         else
                 echo -e "${species} longest_isoform_interpro.gtf not found"
@@ -179,3 +180,5 @@ while read -r line; do
 
 done < species_chr_ID_length.txt
 ```
+
+
