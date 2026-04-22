@@ -1,4 +1,8 @@
-code to separate by chr (I am not in a coding state of mind. don't judge)
+## Comparative Genomics and Phylogenomics of Rhabdiditae Nematodes ###
+
+***Data by Chromosome***
+
+code to separate the data by chr (I am not in a coding state of mind. don't judge)
 
 I took the time to go through each species and each chromosome. 
 The difficulty is that naming isn't consistent; a chromosome could be named chrI, I, chr1, chromosome 1, chromosome:1, etc.
