@@ -1,0 +1,37 @@
+code to separate by chr (I am not in a coding state of mind. don't judge)
+
+I took the time to go through each species and each chromosome. 
+The difficulty is that naming isn't consistent; a chromosome could be named chrI, I, chr1, chromosome 1, chromosome:1, etc.
+Tedious task but it'll speed up the code latter on. 
+
+
+```
+cd /home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_repeatmasker/${species}
+grep -c ">" ${species}.masked
+grep ">" ${species}.masked | head (or just grep without the head depending on how many contigs)
+module load mamba/23.1.0-4
+source activate seqkit
+seqkit grep -n -p "NC_013486.2" ${species}.masked.prettyNames > ${species}_chr2_masked.fasta
+	#repeat for all chromosomes
+	#any not placed scaffolds larger than 1Mb were labelled chrU1, chrU2, chrU3 . . .
+	#note: many unplaced scaffolds in the majority of assemblies, however most are less than 100Kb. Do the best with what we've got
+mkdir by_chr
+mv ${species}_chr* by_chr
+
+#the output will be fastas containing 1 chr each in the dir /home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_repeatmasker/${species}/by_chr
+#the name of the file will have chr# (1/2/3/4/5/X)
+#the header line will be cleaned fasta header (ie. > NC_013486.2) which can be matched to annotation files
+```
+
+```
+#!/bin/bash
+
+while read -r species; do
+        for file in ./RhabditinaPhylogeny_repeatmasker/${species}/by_chr/*; do
+                ID=$(head -1 ${file} | sed 's/>//g')
+                length=$(grep "${ID}" ./RhabditinaPhylogeny_repeatmasker/${species}/${species}_contig_lengths.txt | cut -f 3 -d " ")
+                chr=$(basename ${file} | cut -f 2 -d "_")
+                echo -e "${species}\t${chr}\t${ID}\t${length}" >> species_chr_ID_length.txt
+        done
+done < chr_lvl_species.txt
+```
