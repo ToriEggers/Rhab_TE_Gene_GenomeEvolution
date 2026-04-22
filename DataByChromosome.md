@@ -39,3 +39,17 @@ while read -r species; do
         done
 done < chr_lvl_species.txt
 ```
+
+The output is species_chr_ID_length.txt, which looks like:
+
+```
+AF16    chr1    NC_013489.2     15455979
+AF16    chr2    NC_013486.2     16627154
+AF16    chr3    NC_013490.2     14578851
+AF16    chr4    NC_013487.2     17485439
+AF16    chr5    NC_013488.2     19495157
+AF16    chrX    NC_013491.2     21540570
+APS25   chr1    OZ181880.1      16121759
+APS25   chr2    OZ181881.1      12655968
+APS25   chr3    OZ181882.1      12260034
+```
