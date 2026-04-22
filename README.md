@@ -10,10 +10,11 @@ All compute was done between FIU's HPC and SDSC Expanse via ACCESS allocation BI
 
 [3. GeneAnnotations.md](https://github.com/ToriEggers/Rhabditina_Repeats_and_ConservedElements_GenomeEvolution/blob/main/GeneAnnotations.md) and [repeatAnnotations.md](https://github.com/ToriEggers/Rhab_TE_Gene_GenomeEvolution/blob/main/repeatAnnotations.md)
 
-4. Argonaute Identification
+4. Data by chromosome
 5. Nigon element classification
+6. Argonaute Identification
    
-[6. Gene family evolution with cafe5](https://github.com/ToriEggers/Rhab_TE_Gene_GenomeEvolution/blob/main/cafe5.md)
+[7. Gene family evolution with cafe5](https://github.com/ToriEggers/Rhab_TE_Gene_GenomeEvolution/blob/main/cafe5.md)
 
-7. Conserved elements
-8. Phylogenomic analysis
+8. Conserved elements
+9. Phylogenomic analysis
