@@ -228,7 +228,7 @@ while read -r line; do
 done < species_chr_ID_length.txt
 ```
 
-Finally we'll calculate the ratio of density of repeats on the arms vs the density of repeats on the centers, as well as the ratio of density of genes on the arms vs genes on the centers. We do this considering the arms as the .25% of either end of the chromosome, while the middle is the middle 50%. So if the chromosome was 1000 bases, the arms would be the first and last 250 basepairs, while the middle is the middle 500bps. 
+Finally we'll calculate the ratio of density of repeats on the arms vs the density of repeats on the centers, as well as the ratio of density of genes on the arms vs genes on the centers. Density here is used to mean number of repetitive bases divided by number of total bases for the relavent region. We do this considering the arms as the .25% of either end of the chromosome, while the middle is the middle 50%. So if the chromosome was 1000 bases, the arms would be the first and last 250 basepairs, while the middle is the middle 500bps. The arms are averaged together ((Larm + Rarm)/2).
 
 ```
 
