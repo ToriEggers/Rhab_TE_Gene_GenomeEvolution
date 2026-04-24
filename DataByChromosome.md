@@ -182,4 +182,56 @@ while read -r line; do
 done < species_chr_ID_length.txt
 ```
 
+Now lets get the bps of repeats and coding sequences for each chromosome. Since Kimura distances are in the EarlGrey gff files we'll go ahead and average that per chromosome as well.
+```
+#!/bin/bash
+
+#SBATCH --account acc_jfierst
+#SBATCH --qos standard
+#SBATCH --partition highmem1-sapphirerapids
+#SBATCH --output out_species_chr_ID_cds_repeat_kimura_%j.log
+
+#directories
+wd=/home/data/jfierst/veggers/RhabditinaPhylogeny
+braker2=./RhabditinaPhylogeny_braker2
+braker3=./RhabditinaPhylogeny_braker3
+earlgrey_v6=./RhabditinaPhylogeny_earlGrey_v6
+
+rm species_chr_ID_length_cds_repeat_kimura.txt
+
+while read -r line; do
+#set variables
+        species=$(echo -e "${line}" | cut -f 1)
+        chr_number=$(echo -e "${line}" | cut -f 2)
+        chr_ID=$(echo -e "${line}" | cut -f 3)
+
+#genes
+        if [[ -f ${braker3}/${species}_braker3/by_chr/${species}_${chr_number}_braker3_longest_isoform_interpro.gtf ]]; then
+                cds_bps=$(cat ${wd}/${braker3}/${species}_braker3/by_chr/${species}_${chr_number}_braker3_longest_isoform_interpro.gtf | awk -F'\t' '{sum += ($5 > $4 ? $5 - $4 + 1 : $4 - $5 + 1)} END {print sum}')
+        elif [[ -f ${braker2}/${species}_braker2/by_chr/${species}_${chr_number}_braker2_longest_isoform_interpro.gtf ]]; then
+                cds_bps=$(cat ${wd}/${braker2}/${species}_braker2/by_chr/${species}_${chr_number}_braker2_longest_isoform_interpro.gtf | awk -F'\t' '{sum += ($5 > $4 ? $5 - $4 + 1 : $4 - $5 + 1)} END {print sum}')
+        else
+                echo -e "${species} longest_isoform_interpro.gtf not found"
+        fi
+
+#repeats
+        if [[ -f ${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/${species}_${chr_number}_earlgrey_v6.gff ]]; then
+                repeat_bps=$(cat ${wd}/${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/${species}_${chr_number}_earlgrey_v6.gff | awk -F'\t' '{sum += ($5 > $4 ? $5 - $4 + 1 : $4 - $5 + 1)} END {print sum}')
+                kimura=$(cat ${wd}/${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/${species}_${chr_number}_earlgrey_v6.gff | cut -f 9 | awk -F'KIMURA80=' '{print $2}' | cut -f 1 -d ";" | awk '{sum += $1; n++} END {print sum/n}')
+
+        else
+                echo -e "${species}.filteredRepeats.gff not found"
+        fi
+
+        echo -e "${line}\t${cds_bps}\t${repeat_bps}\t${kimura}" >> species_chr_ID_length_cds_repeat_kimura.txt
+
+done < species_chr_ID_length.txt
+```
+
+Finally we'll calculate the ratio of density of repeats on the arms vs the density of repeats on the centers, as well as the ratio of density of genes on the arms vs genes on the centers. We do this considering the arms as the .25% of either end of the chromosome, while the middle is the middle 50%. So if the chromosome was 1000 bases, the arms would be the first and last 250 basepairs, while the middle is the middle 500bps. 
+
+```
+
+```
+
 
