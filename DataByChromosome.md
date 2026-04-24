@@ -6,9 +6,9 @@ code to separate the data by chr (I am not in a coding state of mind. don't judg
 
 I took the time to go through each species and each chromosome. 
 The difficulty is that naming isn't consistent; a chromosome could be named chrI, I, chr1, chromosome 1, chromosome:1, etc.
-Tedious task but it'll speed up the code latter on. 
+Tedious task but it'll speed up the code latter on. As I went, the name of each species which was chr lvl was added to a list titled: chr_lvl_species.txt
 
-
+Briefly, manually going through everything looked something like this:
 ```
 cd /home/data/jfierst/veggers/RhabditinaPhylogeny/RhabditinaPhylogeny_repeatmasker/${species}
 grep -c ">" ${species}.masked
@@ -27,6 +27,7 @@ mv ${species}_chr* by_chr
 #the header line will be cleaned fasta header (ie. > NC_013486.2) which can be matched to annotation files
 ```
 
+After we had things sorted, make a file called species_chr_ID_length.txt to list all the chromosomes and their lengths for each species.
 ```
 #!/bin/bash
 
