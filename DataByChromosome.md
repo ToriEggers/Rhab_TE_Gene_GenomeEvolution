@@ -231,7 +231,112 @@ done < species_chr_ID_length.txt
 Finally we'll calculate the ratio of density of repeats on the arms vs the density of repeats on the centers, as well as the ratio of density of genes on the arms vs genes on the centers. Density here is used to mean number of repetitive bases divided by number of total bases for the relavent region. We do this considering the arms as the .25% of either end of the chromosome, while the middle is the middle 50%. So if the chromosome was 1000 bases, the arms would be the first and last 250 basepairs, while the middle is the middle 500bps. The arms are averaged together ((Larm + Rarm)/2).
 
 ```
+#!/bin/bash
 
+#SBATCH --account acc_jfierst
+#SBATCH --qos standard
+#SBATCH --partition highmem1-sapphirerapids
+#SBATCH --output out_species_chr_ID_cds_repeat_kimura_ACrepeats_ACgenes_%j.log
+
+module load bedtools2/2.31.1-gcc-13.3.0-ybtyux5
+
+#directories
+wd=/home/data/jfierst/veggers/RhabditinaPhylogeny
+braker2=./RhabditinaPhylogeny_braker2
+braker3=./RhabditinaPhylogeny_braker3
+earlgrey_v6=./RhabditinaPhylogeny_earlGrey_v6
+
+rm species_chr_ID_length_cds_repeat_kimura_ACrepeats_ACgenes.txt
+
+while read -r line; do
+#set variables
+        species=$(echo -e "${line}" | cut -f 1)
+        chr_number=$(echo -e "${line}" | cut -f 2)
+        chr_ID=$(echo -e "${line}" | cut -f 3)
+        chr_length=$(echo -e "${line}" | cut -f 4)
+        chrLcoordinate=$(awk -v chr_length=${chr_length} 'BEGIN {print int(chr_length/4)}')
+        chrRcoordinate=$(awk -v chr_length=${chr_length} -v chrLcoordinate=${chrLcoordinate} 'BEGIN {print chr_length-chrLcoordinate}')
+        chrLmiddle=$(awk -v chrLcoordinate=${chrLcoordinate} 'BEGIN {print chrLcoordinate+1}')
+        chrRmiddle=$(awk -v chrRcoordinate=${chrRcoordinate} 'BEGIN {print chrRcoordinate-1}')
+        length_middle=$(awk -v chrLmiddle=${chrLmiddle} -v chrRmiddle=${chrRmiddle} 'BEGIN {print chrRmiddle-chrLmiddle}')
+
+#report things to make sure there aren't bugs
+        echo -e "${species}\t${chr_number}"
+        echo -e "length: ${chr_length}"
+        echo -e "coordinates: 1-${chrLcoordinate}\t${chrLmiddle}-${chrRmiddle}\t${chrRcoordinate}-${chr_length}"
+
+#make temporary bed files for chr coordinates
+        echo -e "${chr_ID}\t1\t${chrLcoordinate}" > ${species}_${chr_number}_Larm.bed
+        echo -e "${chr_ID}\t${chrLmiddle}\t${chrRmiddle}" > ${species}_${chr_number}_middle.bed
+        echo -e "${chr_ID}\t${chrRcoordinate}\t${chr_length}" > ${species}_${chr_number}_Rarm.bed
+
+#make bed files for the gffs and use bedtools intersect with chr coordinates
+#genes
+        if [[ -f ${braker3}/${species}_braker3/by_chr/${species}_${chr_number}_braker3_longest_isoform_interpro.gtf ]]; then
+                mkdir -p ${braker3}/${species}_braker3/by_chr/bedFiles
+                cat ${braker3}/${species}_braker3/by_chr/${species}_${chr_number}_braker3_longest_isoform_interpro.gtf | cut -f 1,4,5 | awk -v OFS="\t" '{if ($2 > $3) {tmp=$2; $2=$3; $3=tmp} print}' > ${braker3}/${species}_braker3/by_chr/bedFiles/${species}_${chr_number}_braker3_longest_isoform_interpro.bed
+                bedtools intersect -a ${braker3}/${species}_braker3/by_chr/bedFiles/${species}_${chr_number}_braker3_longest_isoform_interpro.bed -b ${species}_${chr_number}_Larm.bed -wo > ${species}_${chr_number}_genes_in_Larm.bed
+                bedtools intersect -a ${braker3}/${species}_braker3/by_chr/bedFiles/${species}_${chr_number}_braker3_longest_isoform_interpro.bed -b ${species}_${chr_number}_middle.bed -wo > ${species}_${chr_number}_genes_in_middle.bed
+                bedtools intersect -a ${braker3}/${species}_braker3/by_chr/bedFiles/${species}_${chr_number}_braker3_longest_isoform_interpro.bed -b ${species}_${chr_number}_Rarm.bed -wo > ${species}_${chr_number}_genes_in_Rarm.bed
+
+        elif [[ -f ${braker2}/${species}_braker2/by_chr/${species}_${chr_number}_braker2_longest_isoform_interpro.gtf ]]; then
+                mkdir -p ${braker2}/${species}_braker2/by_chr/bedFiles
+                cat ${braker2}/${species}_braker2/by_chr/${species}_${chr_number}_braker2_longest_isoform_interpro.gtf | cut -f 1,4,5 | awk -v OFS="\t" '{if ($2 > $3) {tmp=$2; $2=$3; $3=tmp} print}' > ${braker2}/${species}_braker2/by_chr/bedFiles/${species}_${chr_number}_braker2_longest_isoform_interpro.bed
+                bedtools intersect -a ${braker2}/${species}_braker2/by_chr/bedFiles/${species}_${chr_number}_braker2_longest_isoform_interpro.bed -b ${species}_${chr_number}_Larm.bed -wo > ${species}_${chr_number}_genes_in_Larm.bed
+                bedtools intersect -a ${braker2}/${species}_braker2/by_chr/bedFiles/${species}_${chr_number}_braker2_longest_isoform_interpro.bed -b ${species}_${chr_number}_middle.bed -wo > ${species}_${chr_number}_genes_in_middle.bed
+                bedtools intersect -a ${braker2}/${species}_braker2/by_chr/bedFiles/${species}_${chr_number}_braker2_longest_isoform_interpro.bed -b ${species}_${chr_number}_Rarm.bed -wo > ${species}_${chr_number}_genes_in_Rarm.bed
+        else
+                echo -e "${species}_${chr_number} longest_isoform_interpro.gtf not found in braker2 or braker3"
+        fi
+
+#repeats
+        if [[ -f ${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/${species}_${chr_number}_earlgrey_v6.gff ]]; then
+                mkdir -p ${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/bedFiles
+                cat ${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/${species}_${chr_number}_earlgrey_v6.gff | cut -f 1,4,5 | awk '{if ($2>$3) {tmp=$2; $2=$3; $3=tmp} print}' > ${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/bedFiles/${species}_${chr_number}_earlgrey_v6.bed
+                bedtools intersect -a ${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/bedFiles/${species}_${chr_number}_earlgrey_v6.bed -b ${species}_${chr_number}_Larm.bed -wo > ${species}_${chr_number}_repeats_in_Larm.bed
+                bedtools intersect -a ${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/bedFiles/${species}_${chr_number}_earlgrey_v6.bed -b ${species}_${chr_number}_middle.bed -wo > ${species}_${chr_number}_repeats_in_middle.bed
+                bedtools intersect -a ${earlgrey_v6}/${species}_EarlGrey/${species}_summaryFiles/by_chr/bedFiles/${species}_${chr_number}_earlgrey_v6.bed -b ${species}_${chr_number}_Rarm.bed -wo > ${species}_${chr_number}_repeats_in_Rarm.bed
+
+        else
+                echo -e "${species}_${chr_number}_earlgrey_v6.gff not found"
+        fi
+
+#calculate arms:centers
+        genes_in_Larm=$(awk '{sum += $3 - $2} END {print sum+0}' ${species}_${chr_number}_genes_in_Larm.bed)
+        genes_in_middle=$(awk '{sum += $3 - $2} END {print sum+0}' ${species}_${chr_number}_genes_in_middle.bed)
+        genes_in_Rarm=$(awk '{sum += $3 - $2} END {print sum+0}' ${species}_${chr_number}_genes_in_Rarm.bed)
+        repeats_in_Larm=$(awk '{sum += $3 - $2} END {print sum+0}' ${species}_${chr_number}_repeats_in_Larm.bed)
+        repeats_in_middle=$(awk '{sum += $3 - $2} END {print sum+0}' ${species}_${chr_number}_repeats_in_middle.bed)
+        repeats_in_Rarm=$(awk '{sum += $3 - $2} END {print sum+0}' ${species}_${chr_number}_repeats_in_Rarm.bed)
+
+        density_genes_Larm=$(awk -v genes_in_Larm=${genes_in_Larm} -v chrLcoordinate=${chrLcoordinate} 'BEGIN {print genes_in_Larm / chrLcoordinate}')
+        density_genes_middle=$(awk -v genes_in_middle=${genes_in_middle} -v length_middle=${length_middle} 'BEGIN {print genes_in_middle / length_middle}')
+        density_genes_Rarm=$(awk -v genes_in_Rarm=${genes_in_Rarm} -v chrRcoordinate=${chrRcoordinate} 'BEGIN {print genes_in_Rarm / chrRcoordinate}')
+        density_repeats_Larm=$(awk -v repeats_in_Larm=${repeats_in_Larm} -v chrLcoordinate=${chrLcoordinate} 'BEGIN {print repeats_in_Larm / chrLcoordinate}')
+        density_repeats_middle=$(awk -v repeats_in_middle=${repeats_in_middle} -v length_middle=${length_middle} 'BEGIN {print repeats_in_middle / length_middle}')
+        density_repeats_Rarm=$(awk -v repeats_in_Rarm=${repeats_in_Rarm} -v chrRcoordinate=${chrRcoordinate} 'BEGIN {print repeats_in_Rarm / chrRcoordinate}')
+
+        avg_genes_arm=$(awk -v density_genes_Rarm=${density_genes_Rarm} -v density_genes_Larm=${density_genes_Larm} 'BEGIN {print (density_genes_Larm + density_genes_Rarm)/2}')
+        avg_repeats_arm=$(awk -v density_repeats_Rarm=${density_repeats_Rarm} -v density_repeats_Larm=${density_repeats_Larm} 'BEGIN {print (density_repeats_Larm + density_repeats_Rarm)/2}')
+
+        ACgenes=$(awk -v avg_genes_arm=${avg_genes_arm} -v density_genes_middle=${density_genes_middle} 'BEGIN {print avg_genes_arm / density_genes_middle}')
+        ACrepeats=$(awk -v avg_repeats_arm=${avg_repeats_arm} -v density_repeats_middle=${density_repeats_middle} 'BEGIN {print avg_repeats_arm / density_repeats_middle}')
+
+#make output file
+        echo -e "${line}\t${ACrepeats}\t${ACgenes}" >> species_chr_ID_length_cds_repeat_kimura_ACrepeats_ACgenes.txt
+
+#delete intermediate files
+rm ${species}_${chr_number}_Larm.bed
+rm ${species}_${chr_number}_middle.bed
+rm ${species}_${chr_number}_Rarm.bed
+rm ${species}_${chr_number}_genes_in_Larm.bed
+rm ${species}_${chr_number}_genes_in_middle.bed
+rm ${species}_${chr_number}_genes_in_Rarm.bed
+rm ${species}_${chr_number}_repeats_in_Larm.bed
+rm ${species}_${chr_number}_repeats_in_middle.bed
+rm ${species}_${chr_number}_repeats_in_Rarm.bed
+
+done < species_chr_ID_length_cds_repeat_kimura.txt
 ```
 
 
